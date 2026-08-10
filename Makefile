@@ -11,8 +11,8 @@ PLUGIN_ARCHIVE_DIR := $(PACKAGES_DIR)/plugins
 SKILLS := $(sort $(patsubst $(SKILLS_DIR)/%,%,$(wildcard $(SKILLS_DIR)/nerdynik-*)))
 PLUGINS := $(sort $(patsubst $(PLUGINS_DIR)/%,%,$(wildcard $(PLUGINS_DIR)/nerdynik-*)))
 
-SKILL_ARCHIVES := $(addprefix $(SKILL_ARCHIVE_DIR)/,$(addsuffix .tar.gz,$(SKILLS)))
-PLUGIN_ARCHIVES := $(addprefix $(PLUGIN_ARCHIVE_DIR)/,$(addsuffix .tar.gz,$(PLUGINS)))
+SKILL_ARCHIVES := $(addprefix $(SKILL_ARCHIVE_DIR)/,$(addsuffix .zip,$(SKILLS)))
+PLUGIN_ARCHIVES := $(addprefix $(PLUGIN_ARCHIVE_DIR)/,$(addsuffix .zip,$(PLUGINS)))
 
 all: package-all
 
@@ -34,13 +34,15 @@ list:
 	@echo "Plugins:"
 	@for pkg in $(PLUGINS); do echo "  - $$pkg"; done
 
-$(SKILL_ARCHIVE_DIR)/%.tar.gz: $(SKILLS_DIR)/%
+$(SKILL_ARCHIVE_DIR)/%.zip: $(SKILLS_DIR)/%
 	mkdir -p $(SKILL_ARCHIVE_DIR)
-	tar -czf $@ -C $(SKILLS_DIR) $(notdir $<)
+	rm -f $@
+	cd $(SKILLS_DIR) && zip -rq "$(abspath $@)" "$(notdir $<)"
 
-$(PLUGIN_ARCHIVE_DIR)/%.tar.gz: $(PLUGINS_DIR)/%
+$(PLUGIN_ARCHIVE_DIR)/%.zip: $(PLUGINS_DIR)/%
 	mkdir -p $(PLUGIN_ARCHIVE_DIR)
-	tar -czf $@ -C $(PLUGINS_DIR) $(notdir $<)
+	rm -f $@
+	cd $(PLUGINS_DIR) && zip -rq "$(abspath $@)" "$(notdir $<)"
 
 package-skills: $(SKILL_ARCHIVES)
 
