@@ -15,13 +15,19 @@ nerdynik-task-management/
   .claude-plugin/
     plugin.json                            # manifest + userConfig for Vikunja credentials
   .mcp.json                                # Vikunja MCP server
-  references/                              # shared by both skills
+  references/                              # single source, shared by both skills
     capability-contract.md                 # what any tracker must provide; fallbacks when it doesn't
     vikunja.md                             # Vikunja mapping, filter syntax, MCP tools, operational rules
   skills/
     nerdynik-task-list-organization/       # projects, labels, role-level views
+      references -> ../../references       # symlink
     nerdynik-okr-task-management/          # long-term → mid-term → short-term goals, per scope
+      references -> ../../references       # symlink
 ```
+
+Each skill reaches the shared references through a symlink in its own directory, so a skill refers to `references/vikunja.md` as an ordinary relative path. This avoids `${CLAUDE_PLUGIN_ROOT}`, which isn't substituted on every surface that loads skills. Because the symlink resolves *within* the plugin directory, it's preserved as a relative symlink in the plugin cache and keeps working after install; `make package-plugins` dereferences it into real files in the archive.
+
+Edit the files under `references/` only — the skill directories are links, not copies.
 
 ## Skills
 
@@ -62,7 +68,7 @@ Vikunja provides all six natively, so nothing is degraded there. To adapt to ano
 
 ## Vikunja setup
 
-The plugin bundles the [vikunja-mcp](https://github.com/democratize-technology/vikunja-mcp) server (`@democratize-technology/vikunja-mcp`) and prompts for two values when you enable it:
+The plugin bundles the [vikunja-mcp](https://github.com/democratize-technology/vikunja-mcp) server (`@democratize-technology/vikunja-mcp`) and prompts for two values when you enable it. **Both are required** — enabling fails if either is blank:
 
 | Field | Value |
 |---|---|
@@ -71,9 +77,9 @@ The plugin bundles the [vikunja-mcp](https://github.com/democratize-technology/v
 
 The token needs read/write on tasks, projects, and labels. It's stored in your OS keychain, not in `settings.json`.
 
-Both fields are optional — leave them blank if you use a different tracker, and the skills still work as conventions with the MCP server simply unavailable.
-
 Requires Node.js ≥ 20. MCP servers a plugin declares still go through per-server approval, so Claude Code will ask before the Vikunja server starts.
+
+Reconfigure later with `/plugin configure nerdynik-task-management@nerdynik`.
 
 ### API token vs JWT
 

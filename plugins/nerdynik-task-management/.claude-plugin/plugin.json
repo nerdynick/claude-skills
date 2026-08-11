@@ -3,7 +3,7 @@
   "name": "nerdynik-task-management",
   "displayName": "Task Management",
   "description": "Conventions for running task lists that stay useful at scale: customer/project naming, labels as the cross-project correlation axis for practices and partners, role-level saved views, and an OKR structure spanning long-term objectives, mid-term key results, and short-term SMART goals across as many independently scoped goal sets as you track. Bundles the Vikunja MCP server, with the conventions written to port to other task trackers.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "nerdynik",
     "url": "https://github.com/nerdynick"
@@ -24,15 +24,15 @@
     "vikunja_url": {
       "type": "string",
       "title": "Vikunja API URL",
-      "description": "Your Vikunja instance's API endpoint, including the /api/v1 suffix — for example https://vikunja.example.com/api/v1. Leave blank if you use a different task tracker.",
-      "required": false
+      "description": "Your Vikunja instance's API endpoint, including the /api/v1 suffix — for example https://vikunja.example.com/api/v1.",
+      "required": true
     },
     "vikunja_api_token": {
       "type": "string",
       "title": "Vikunja API token",
       "description": "Personal API token from Settings > API Tokens in Vikunja. Starts with tk_. Needs read/write scope on tasks, projects, and labels.",
       "sensitive": true,
-      "required": false
+      "required": true
     }
   }
 }

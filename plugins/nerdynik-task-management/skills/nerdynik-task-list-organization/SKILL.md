@@ -7,7 +7,7 @@ description: Use when creating, structuring, auditing, or reporting on task list
 
 Keeps task tracking legible when there are more engagements, practices, and partners than one person can hold in their head. The conventions below are the ones that survive scale; the reasoning is included because you'll hit cases they don't cover and will need to extend them consistently.
 
-Written tool-agnostically. For Vikunja mechanics — filter syntax, MCP tools, the data model — read `${CLAUDE_PLUGIN_ROOT}/references/vikunja.md`. For any other tracker, read `${CLAUDE_PLUGIN_ROOT}/references/capability-contract.md` first to find what maps and what degrades.
+Written tool-agnostically. For Vikunja mechanics — filter syntax, MCP tools, the data model — read `references/vikunja.md` next to this file. For any other tracker, read `references/capability-contract.md` first to find what maps and what degrades.
 
 ## Before doing anything: confirm where you're writing
 

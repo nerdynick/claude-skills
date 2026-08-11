@@ -9,7 +9,7 @@ Runs objectives and key results inside a task tracker, so goals live where the w
 
 The same discipline as [[nerdynik-task-list-organization]] applies — naming that reads out of context, labels as the correlation axis, no fake due dates — but the structure is separate and deliberately small. Read that skill for the general conventions; this one covers only what's different about goals.
 
-Written tool-agnostically. For Vikunja mechanics read `${CLAUDE_PLUGIN_ROOT}/references/vikunja.md`; for any other tracker start with `${CLAUDE_PLUGIN_ROOT}/references/capability-contract.md`. This skill leans hardest on hierarchy and numeric progress, so check those two first when adapting.
+Written tool-agnostically. For Vikunja mechanics read `references/vikunja.md` next to this file; for any other tracker start with `references/capability-contract.md`. This skill leans hardest on hierarchy and numeric progress, so check those two first when adapting.
 
 ## Before doing anything: confirm the scope and horizon
 

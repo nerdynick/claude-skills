@@ -25,6 +25,12 @@ This repository is a Claude Code **plugin marketplace** plus a collection of sta
 - Run `make validate` after touching any manifest. Note that validation does **not** check that a `source` path exists — that failure only surfaces at install time
 - Renaming an already-published plugin breaks existing installs unless a `renames` entry is added to `marketplace.json`
 
+## Sharing files between skills in one plugin
+- Do **not** use `${CLAUDE_PLUGIN_ROOT}` in skill content to reach bundled files. It isn't substituted on every surface that loads skills — Claude Desktop leaves it literal, and the read fails.
+- Instead keep one copy at the plugin root (e.g. `references/`) and symlink it into each skill directory: `ln -s ../../references skills/<skill>/references`. The skill then uses a plain relative path, `references/vikunja.md`.
+- This works because a symlink resolving *within* the plugin's own directory is preserved as a relative symlink in the plugin cache. Symlinks pointing outside the plugin are dereferenced or skipped.
+- Edit the shared copy only; the skill-directory entries are links. `make package-plugins` dereferences them into real files in the archive, so an unzipped skill is self-contained.
+
 ## Naming: `nerdynik` vs `nerdynick`
 Both spellings are intentional. The package prefix and marketplace name use `nerdynik`; anything pointing at GitHub (clone URLs, `owner/repo` shorthand, profile links) uses the account name `nerdynick`. Do not normalize one to the other.
 
