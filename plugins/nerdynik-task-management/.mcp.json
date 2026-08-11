@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "vikunja": {
+      "command": "npx",
+      "args": ["-y", "@democratize-technology/vikunja-mcp"],
+      "env": {
+        "VIKUNJA_URL": "${user_config.vikunja_url}",
+        "VIKUNJA_API_TOKEN": "${user_config.vikunja_api_token}"
+      }
+    }
+  }
+}

@@ -27,6 +27,29 @@
       "homepage": "https://github.com/nerdynick/claude-skills/tree/main/plugins/nerdynik-obsidian-ps-toolkit",
       "repository": "https://github.com/nerdynick/claude-skills",
       "license": "GPL-3.0-or-later"
+    },
+    {
+      "name": "nerdynik-task-management",
+      "source": "./plugins/nerdynik-task-management",
+      "displayName": "Task Management",
+      "description": "Conventions for running task lists that stay useful at scale: customer/project naming, labels as the cross-project correlation axis for practices and partners, role-level saved views, and an OKR structure spanning long-term objectives, mid-term key results, and short-term SMART goals across as many independently scoped goal sets as you track. Bundles the Vikunja MCP server, with the conventions written to port to other task trackers.",
+      "category": "productivity",
+      "keywords": [
+        "tasks",
+        "task-management",
+        "vikunja",
+        "okr",
+        "smart-goals",
+        "professional-services",
+        "mcp"
+      ],
+      "author": {
+        "name": "nerdynik",
+        "url": "https://github.com/nerdynick"
+      },
+      "homepage": "https://github.com/nerdynick/claude-skills/tree/main/plugins/nerdynik-task-management",
+      "repository": "https://github.com/nerdynick/claude-skills",
+      "license": "GPL-3.0-or-later"
     }
   ]
 }

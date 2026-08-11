@@ -18,6 +18,7 @@ Update later with `/plugin marketplace update nerdynik`, then `/plugin update <p
 | Plugin | Description |
 |---|---|
 | [`nerdynik-obsidian-ps-toolkit`](plugins/nerdynik-obsidian-ps-toolkit) | Skills for working inside Obsidian vaults on Professional Services / C&SI / SI engagements (client/project structure, reading Project Manager plugin plan data) plus MCP server references (Plaud) for pulling external data into the vault. |
+| [`nerdynik-task-management`](plugins/nerdynik-task-management) | Conventions for task lists that stay legible at scale — customer/project naming, labels as the cross-project axis for practices and partners, role-level saved views — plus an OKR structure across annual, quarterly, and monthly SMART horizons. Bundles the Vikunja MCP server, written to port to other trackers. |
 
 Each plugin's README covers its own prerequisites — read it before installing.
 
