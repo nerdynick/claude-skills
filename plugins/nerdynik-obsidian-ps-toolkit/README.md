@@ -12,9 +12,18 @@ nerdynik-obsidian-ps-toolkit/
     plugin.json                                  # plugin manifest
   .mcp.json                                       # bundled MCP server references
   skills/
-    nerdynik-obsidian-vault-organization/         # client/project folder structure
-    nerdynik-obsidian-project-manager-notes/      # reading Project Manager plan data
+    nerdynik-obsidian-vault-organization/         # vault taxonomy: customers, partners, people, daily summaries
+      references/
+        daily-summaries.md                        # full daily-summary spec and template
 ```
+
+## Depends on: Obsidian Toolkit
+
+This plugin declares a dependency on [`nerdynik-obsidian-toolkit`](../nerdynik-obsidian-toolkit), which Claude Code installs automatically alongside it.
+
+That plugin holds the general-purpose Obsidian skills — currently `nerdynik-obsidian-project-manager-notes`, which reads plan data written by the Obsidian **Project Manager** community plugin. The PS taxonomy here integrates with that store directly: vault-root `Projects/` is Project Manager's own folder, and this plugin's skills wikilink to that skill for its file format.
+
+The split is by scope. Understanding how a community plugin serializes its data is true for any Obsidian user; the customer/partner/practice taxonomy is not.
 
 ## Prerequisite: Desktop Commander
 
@@ -29,25 +38,18 @@ Install it once, separately from this plugin:
 
 The skills here build *on top of* Desktop Commander's `obsidian-vault` skill rather than duplicating it — that skill already owns wikilink mechanics, frontmatter/property conventions, MOCs, dashboards (Dataview/Bases), and orphan-note cleanup. In particular, it establishes a hard rule this plugin's skills also follow: **renames and moves of existing notes must happen inside the Obsidian app**, never via a raw filesystem `move_file`, because wikilinks resolve by filename and only Obsidian's own rename updates backlinks. Skills here only ever create *new* files/folders directly, and otherwise defer moves to the user or flag the backlink risk.
 
-## MCP integrations
+## Recording sources
 
-External data sources get wired in here as `.mcp.json` entries plus a short setup note, added one at a time as a real need arises (not sped up speculatively).
+This plugin bundles no MCP servers. The daily-summary workflow needs a source of call recordings, but deliberately doesn't mandate which one — it's written to work from whatever system the user records with, or from calendar data alone.
 
-### Plaud (call transcripts & summaries)
+For Plaud specifically, install [`nerdynik-plaud-toolkit`](../nerdynik-plaud-toolkit) alongside this plugin. It carries the Plaud MCP server and the skill for interpreting its output — the parts that matter for daily summaries being that the "polished" transcript paraphrases and must not be quoted, that diarization merges speakers into single turns, and that `created_at` is the *end* of a meeting rather than its start.
 
-[Plaud](https://www.plaud.ai/) devices/app record and transcribe calls, meetings, and discussions, with AI-generated summaries and notes. The bundled `.mcp.json` entry runs the official server (`@plaud-ai/mcp`), which reads a signed-in Plaud account read-only — no audio is uploaded or modified.
-
-**One-time setup** (per machine, before Claude Code can use it):
-
-1. `npx -y @plaud-ai/mcp@latest install` — opens a browser; click **Authorize**.
-2. Fully restart Claude Code (not just the window) so it picks up the authorized session.
-3. If you ever need to (re-)authenticate from inside a session, just ask: "Log me into Plaud."
-
-Requires Node.js ≥ 20 and a Plaud account. Tools exposed: `login`, `logout`, `get_current_user`, `list_files`, `get_file`, `get_note`, `get_transcript`.
+It's a soft pairing, not a declared dependency: recordings can come from anywhere, so forcing Plaud on someone who records elsewhere would be wrong.
 
 ## Skills
 
 | Skill | Use it for |
 |---|---|
-| `nerdynik-obsidian-vault-organization` | Setting up a new client/project space, deciding where a note belongs, auditing an existing vault's structure against the house convention. |
-| `nerdynik-obsidian-project-manager-notes` | Reading/summarizing milestones, tasks, and subtasks written by the Obsidian **Project Manager** community plugin (`obsidian-pm`), and turning that plan data into status updates. |
+| `nerdynik-obsidian-vault-organization` | Setting up a new customer/partner/project space, deciding where a note belongs, tracking people across the account, recording townhalls and narratives, producing daily summaries from call recordings and calendar data, triaging web clippings, and auditing an existing vault against the house convention. |
+
+Reading and summarizing Project Manager plan data now lives in `nerdynik-obsidian-project-manager-notes`, in the [Obsidian Toolkit](../nerdynik-obsidian-toolkit) plugin installed alongside this one.

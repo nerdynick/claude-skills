@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "nerdynik-obsidian-toolkit",
+  "displayName": "Obsidian Toolkit",
+  "description": "General-purpose Obsidian vault skills, independent of any industry or practice. Currently covers reading and reasoning over plan data written by the Obsidian Project Manager community plugin (obsidian-pm) — projects, milestones, tasks, subtasks, and their frontmatter schema.",
+  "version": "0.1.0",
+  "author": {
+    "name": "nerdynik",
+    "url": "https://github.com/nerdynick"
+  },
+  "homepage": "https://github.com/nerdynick/claude-skills/tree/main/plugins/nerdynik-obsidian-toolkit",
+  "repository": "https://github.com/nerdynick/claude-skills",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "obsidian",
+    "notes",
+    "knowledge-base",
+    "project-manager",
+    "obsidian-pm",
+    "pkm"
+  ]
+}

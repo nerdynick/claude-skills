@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "nerdynik-plaud-toolkit",
+  "displayName": "Plaud Toolkit",
+  "description": "Retrieving and correctly interpreting recordings, transcripts, and AI notes from a Plaud account. Bundles the official Plaud MCP server and a skill covering the parts that bite: context-heavy responses, a paraphrasing \"polished\" transcript that must never be quoted, diarization that merges two speakers into one turn, UTC-vs-local timestamp mismatches, and the proper-noun glossary loop that keeps mistranscribed names out of downstream notes.",
+  "version": "0.1.0",
+  "author": {
+    "name": "nerdynik",
+    "url": "https://github.com/nerdynick"
+  },
+  "homepage": "https://github.com/nerdynick/claude-skills/tree/main/plugins/nerdynik-plaud-toolkit",
+  "repository": "https://github.com/nerdynick/claude-skills",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "plaud",
+    "transcripts",
+    "recordings",
+    "meeting-notes",
+    "transcription",
+    "diarization",
+    "mcp"
+  ],
+  "userConfig": {
+    "glossary_path": {
+      "type": "file",
+      "title": "Transcription glossary file",
+      "description": "Optional. Path to the maintained file of known mistranscriptions (proper nouns, product names, jargon) and their corrections. The skill reads it before interpreting any transcript. Leave blank to be asked per session, or to skip if you don't keep one yet.",
+      "required": false
+    }
+  }
+}

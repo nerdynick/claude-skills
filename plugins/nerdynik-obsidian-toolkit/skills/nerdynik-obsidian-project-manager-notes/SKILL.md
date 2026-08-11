@@ -7,7 +7,9 @@ description: Use when reading, summarizing, querying, or reporting on project pl
 
 The Obsidian community plugin **Project Manager** (`obsidian-pm`, by StepanKropachev) stores every project, task, subtask, and milestone as its own plain-Markdown file with YAML frontmatter, inside one configurable vault folder (default `Projects/`). No database, no export step — read the files directly.
 
-**Builds on Desktop Commander's `obsidian-vault` skill** for the mechanics of searching and reading vault files (`start_search`, `read_multiple_files`), and on [[nerdynik-obsidian-vault-organization]] for where this data sits relative to a client/project's supporting folders. This skill is specifically about *parsing and reasoning over* what Project Manager writes.
+**Builds on Desktop Commander's `obsidian-vault` skill** for the mechanics of searching and reading vault files (`start_search`, `read_multiple_files`). This skill is specifically about *parsing and reasoning over* what Project Manager writes, and applies to any vault using the plugin regardless of what the projects are for.
+
+Nothing here assumes a particular vault taxonomy. If the vault also follows a domain-specific structure — for Professional Services work, [[nerdynik-obsidian-vault-organization]] — that skill defines where a project's *supporting* material lives relative to this plan data, and how project titles encode which customer they belong to. Use it when it's available; don't require it.
 
 ## Storage layout (confirmed against a live vault)
 
@@ -71,7 +73,7 @@ Remember the per-project status/priority override above when aggregating across 
 ## Reading algorithm
 
 1. **Locate the store.** Ask, or search the vault for files containing `pm-task: true` / `pm-project: true` frontmatter, to find the configured Projects folder (don't assume the default `Projects/` name is still in use).
-2. **Find the project(s) in scope.** Search for `pm-project: true`; if the request names a client/project, cross-reference [[nerdynik-obsidian-vault-organization]]'s client-marker convention (custom field or tag) to filter to the right one in a shared vault. Note the project note's own `id`.
+2. **Find the project(s) in scope.** Search for `pm-project: true` and match on the project note's `title`. In a shared vault holding many projects, the title is usually what disambiguates — vaults commonly prefix it with an owning customer, team, or area (e.g. `<Customer Abbreviation> - <Project Name>`, the convention [[nerdynik-obsidian-vault-organization]] defines for PS vaults). Ask which project is meant rather than guessing when several titles are close. Note the project note's own `id`.
 3. **Gather that project's items** by reading every file in `<Project Title>_tasks/` (fastest: `read_multiple_files` on the whole folder) and/or filtering by `projectId` equal to the project's `id` — the two should agree; if they don't, trust `projectId` since that's what the plugin itself uses.
 4. **Build the ID graph in memory**: map `id → item`, then link children by `parentId` (or equivalently each parent's `subtaskIds`). Top-level items are those with no `parentId`.
 5. **Read each item's `type`, `status`, `priority`**, remembering these are lowercase and that `status`/`priority` come from that project's own palette if it defines a custom one rather than the global default.
