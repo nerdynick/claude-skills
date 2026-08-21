@@ -1,0 +1,18 @@
+# Pull requests are validation only — nothing is packaged or published from a
+# branch. Packaging and releasing happen on push to main; see release.yml.
+name: Pull Request
+
+on:
+  pull_request:
+
+# A newer push to the same PR makes an in-flight run irrelevant.
+concurrency:
+  group: pull-request-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml

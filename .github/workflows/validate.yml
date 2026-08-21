@@ -1,0 +1,36 @@
+# The validation suite, factored out so pull-request.yml and release.yml run the
+# identical checks rather than each keeping its own copy. Every step delegates to
+# a Makefile target, so `make validate` locally is what CI runs.
+name: Validate
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Manifests and coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # `make validate-manifests` shells out to `claude plugin validate`, which
+      # is entirely local — no API key or login needed.
+      - name: Install Claude Code CLI
+        run: npm install --global @anthropic-ai/claude-code
+
+      - name: List discovered packages
+        run: make list
+
+      - name: Validate marketplace and plugin manifests
+        run: make validate-manifests
+
+      - name: Check marketplace coverage
+        run: make validate-coverage

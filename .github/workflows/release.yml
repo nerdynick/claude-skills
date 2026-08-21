@@ -1,0 +1,102 @@
+# Push to main: validate, package with the Makefile, and publish the archives as
+# release `v<marketplace version>`. The tag is the gate — if that version is
+# already released this is a no-op, so a release is cut exactly when `version` in
+# .claude-plugin/marketplace.json is bumped.
+#
+# Only `push` to main triggers this file, so no job needs to test the branch or
+# event. Re-run a failed run from the Actions UI rather than dispatching it
+# manually, which would publish from whatever ref was chosen.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+# Queue overlapping pushes instead of cancelling: a run that has started
+# publishing must be allowed to finish.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      packaged: ${{ steps.package.outputs.packaged }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build skill and plugin archives
+        id: package
+        run: |
+          make package-all
+          if [ -d dist ]; then
+            count=$(find dist -type f -name '*.zip' | wc -l | tr -d '[:space:]')
+          else
+            count=0
+          fi
+          echo "packaged=$count" >> "$GITHUB_OUTPUT"
+          echo "Built $count archive(s)."
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: dist/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: build
+    # Nothing to release when the marketplace has no local packages — every
+    # plugin is remote-sourced, or the template has not been filled in yet.
+    if: needs.build.outputs.packaged != '0'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # Release exactly the archives that were validated and built above.
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: dist
+
+      - name: Stage release assets
+        id: stage
+        run: python3 scripts/prepare-release.py
+
+      - name: Check whether this version is already released
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v${{ steps.stage.outputs.version }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "Release $tag already exists — bump \"version\" in .claude-plugin/marketplace.json to cut a new one."
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "Release $tag is new."
+          fi
+
+      - name: Publish release
+        if: steps.existing.outputs.published == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v${{ steps.stage.outputs.version }}"
+          gh release create "$tag" \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --notes-file "${{ steps.stage.outputs.notes }}" \
+            "${{ steps.stage.outputs.staging }}"/*.zip

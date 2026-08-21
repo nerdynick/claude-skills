@@ -1,6 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "nerdynik",
+  "version": "0.1.0",
   "description": "A personal collection of Claude Code plugins and standalone Agent Skills by nerdynik.",
   "owner": {
     "name": "nerdynik",
