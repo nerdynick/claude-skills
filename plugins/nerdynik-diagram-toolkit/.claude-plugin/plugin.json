@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "nerdynik-diagram-toolkit",
+  "displayName": "Diagram Toolkit",
+  "description": "Producing diagrams with Mermaid and draw.io, bundling both toolchains' MCP servers. Covers which tool actually renders, validates, or writes a file — the hosted draw.io app server previews but persists nothing, the local tool server reads and writes .drawio files a page at a time, and only the draw.io Desktop CLI can auto-layout or export PNG/SVG/PDF. Plus the syntax and escaping rules that silently break a diagram in each format, and guides for org charts and project-schedule Gantt charts.",
+  "version": "0.1.0",
+  "author": {
+    "name": "nerdynik",
+    "url": "https://github.com/nerdynick"
+  },
+  "homepage": "https://github.com/nerdynick/claude-skills/tree/main/plugins/nerdynik-diagram-toolkit",
+  "repository": "https://github.com/nerdynick/claude-skills",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "diagrams",
+    "mermaid",
+    "drawio",
+    "diagrams-net",
+    "mxgraph",
+    "flowchart",
+    "architecture",
+    "mcp"
+  ]
+}

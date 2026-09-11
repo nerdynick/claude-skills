@@ -7,7 +7,7 @@ description: Use when reading, summarizing, querying, or reporting on project pl
 
 The Obsidian community plugin **Project Manager** (`obsidian-pm`, by StepanKropachev) stores every project, task, subtask, and milestone as its own plain-Markdown file with YAML frontmatter, inside one configurable vault folder (default `Projects/`). No database, no export step — read the files directly.
 
-**Builds on Desktop Commander's `obsidian-vault` skill** for the mechanics of searching and reading vault files (`start_search`, `read_multiple_files`). This skill is specifically about *parsing and reasoning over* what Project Manager writes, and applies to any vault using the plugin regardless of what the projects are for.
+Reading a vault needs **filesystem access** — Desktop Commander's `start_search` and `read_multiple_files` are what this assumes, since a vault is a folder of Markdown files rather than an API. This skill is specifically about *parsing and reasoning over* what Project Manager writes, and applies to any vault using the plugin regardless of what the projects are for.
 
 Nothing here assumes a particular vault taxonomy. If the vault also follows a domain-specific structure — for Professional Services work, [[nerdynik-obsidian-vault-organization]] — that skill defines where a project's *supporting* material lives relative to this plan data, and how project titles encode which customer they belong to. Use it when it's available; don't require it.
 

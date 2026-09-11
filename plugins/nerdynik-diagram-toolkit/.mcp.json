@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "http",
+      "url": "https://mcp.draw.io/mcp"
+    },
+    "drawio-local": {
+      "command": "npx",
+      "args": ["-y", "@drawio/mcp"]
+    },
+    "mermaid": {
+      "command": "npx",
+      "args": ["-y", "mcp-mermaid"]
+    }
+  }
+}

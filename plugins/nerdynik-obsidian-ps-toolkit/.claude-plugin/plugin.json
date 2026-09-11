@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "nerdynik-obsidian-ps-toolkit",
   "displayName": "Obsidian PS Toolkit",
-  "description": "Skills for working inside Obsidian vaults on Professional Services, C&SI, and SI engagements: the customer/partner/practice/company folder taxonomy, tracking people across accounts and projects, and daily summaries built from call recordings and calendar data. Pairs with nerdynik-obsidian-toolkit for Project Manager plan data, and with nerdynik-plaud-toolkit when recordings come from Plaud.",
-  "version": "0.2.0",
+  "description": "Skills for working inside Obsidian vaults on Professional Services, C&SI, and SI engagements: the customer/partner/practice/company folder taxonomy, tracking people across accounts and projects, org charts maintained as both a Mermaid diagram and a DrawIO file, and daily summaries built from call recordings and calendar data. Depends on nerdynik-obsidian-toolkit for Project Manager plan data and nerdynik-diagram-toolkit for the Mermaid and draw.io toolchains; pairs with nerdynik-plaud-toolkit when recordings come from Plaud.",
+  "version": "0.6.0",
   "author": {
     "name": "nerdynik",
     "url": "https://github.com/nerdynick"
@@ -16,9 +16,14 @@
     "notes",
     "professional-services",
     "project-management",
+    "org-chart",
+    "mermaid",
+    "drawio",
+    "diagrams",
     "mcp"
   ],
   "dependencies": [
-    "nerdynik-obsidian-toolkit"
+    "nerdynik-obsidian-toolkit",
+    "nerdynik-diagram-toolkit"
   ]
 }

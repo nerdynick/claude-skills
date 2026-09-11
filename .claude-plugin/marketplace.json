@@ -9,6 +9,30 @@
   },
   "plugins": [
     {
+      "name": "nerdynik-diagram-toolkit",
+      "source": "./plugins/nerdynik-diagram-toolkit",
+      "displayName": "Diagram Toolkit",
+      "description": "Producing diagrams with Mermaid and draw.io, bundling both toolchains' MCP servers. Covers which tool actually renders, validates, or writes a file — the hosted draw.io app server previews but persists nothing, the local tool server reads and writes .drawio files a page at a time, and only the draw.io Desktop CLI can auto-layout or export PNG/SVG/PDF. Plus the syntax and escaping rules that silently break a diagram in each format, and guides for org charts and project-schedule Gantt charts.",
+      "category": "productivity",
+      "keywords": [
+        "diagrams",
+        "mermaid",
+        "drawio",
+        "diagrams-net",
+        "mxgraph",
+        "flowchart",
+        "architecture",
+        "mcp"
+      ],
+      "author": {
+        "name": "nerdynik",
+        "url": "https://github.com/nerdynick"
+      },
+      "homepage": "https://github.com/nerdynick/claude-skills/tree/main/plugins/nerdynik-diagram-toolkit",
+      "repository": "https://github.com/nerdynick/claude-skills",
+      "license": "GPL-3.0-or-later"
+    },
+    {
       "name": "nerdynik-obsidian-toolkit",
       "source": "./plugins/nerdynik-obsidian-toolkit",
       "displayName": "Obsidian Toolkit",
@@ -34,13 +58,17 @@
       "name": "nerdynik-obsidian-ps-toolkit",
       "source": "./plugins/nerdynik-obsidian-ps-toolkit",
       "displayName": "Obsidian PS Toolkit",
-      "description": "Skills for working inside Obsidian vaults on Professional Services, C&SI, and SI engagements: the customer/partner/practice/company folder taxonomy, tracking people across accounts and projects, and daily summaries built from call recordings and calendar data. Pairs with nerdynik-obsidian-toolkit for Project Manager plan data, and with nerdynik-plaud-toolkit when recordings come from Plaud.",
+      "description": "Skills for working inside Obsidian vaults on Professional Services, C&SI, and SI engagements: the customer/partner/practice/company folder taxonomy, tracking people across accounts and projects, org charts maintained as both a Mermaid diagram and a DrawIO file, and daily summaries built from call recordings and calendar data. Depends on nerdynik-obsidian-toolkit for Project Manager plan data and nerdynik-diagram-toolkit for the Mermaid and draw.io toolchains; pairs with nerdynik-plaud-toolkit when recordings come from Plaud.",
       "category": "productivity",
       "keywords": [
         "obsidian",
         "notes",
         "professional-services",
         "project-management",
+        "org-chart",
+        "mermaid",
+        "drawio",
+        "diagrams",
         "mcp"
       ],
       "author": {

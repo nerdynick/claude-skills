@@ -67,11 +67,12 @@ Only when the user maintains recordings of their meetings. Per call:
 
 For attendees, wikilink each person to their record, resolved the same way as everywhere else in the vault:
 
-1. Our own staff → `<Company Name>/Relationships/<Person>`
+1. Our own staff → `<Company Name>/Organization/Relationships/<Person>`
 2. Partner reps → `Partners/<Partner>/Organization/Relationships/<Person>`
-3. Customer employees → a heading link into `Customers/<Customer>/Organization/Org Chart`
-4. **No individual relationship file exists** → link to the org chart entry instead. Falling back to the org chart is expected and correct; don't create a relationship file just to have a link target.
-5. Not in the vault at all → plain text name plus email. Note them as unrecorded; a recurring unknown attendee is a signal someone needs a record.
+3. Customer contacts we work with directly → `Customers/<Customer>/Organization/Relationships/<Person>`
+4. Any other customer employee → a heading link into `Customers/<Customer>/Organization/Org Chart`
+5. **No individual relationship file exists** → link to the org chart entry instead. Falling back to the org chart is expected and correct; don't create a relationship file just to have a link target, and merely attending a meeting never earns one — see [[org-charts-and-relationships]] for the gate.
+6. Not in the vault at all → plain text name plus email. Note them as unrecorded; a recurring unknown attendee is a signal someone needs a record.
 
 **Cross-reference every recording against the available calendar** to find the correlated invite. When one is found, log **all** invitees from it — including those who didn't attend, which is itself information — and wikilink them per the rules above.
 
@@ -99,6 +100,17 @@ State each finding, then the evidence behind it. A finding with no source can't 
 Which projects and efforts the day covered. Wikilink each to `Customers/<Customer>/Projects/<Project>/` and to its Project Manager note.
 
 Include internal and non-billable effort too. A day that looks empty of project work usually wasn't empty.
+
+**Where the day included a project's standup, link that project's DSU note** —
+`Customers/<Customer>/Projects/<Project>/DSU Notes/<YYYY-MM>/<DD>-<Name>.md`, by its canonical
+alias rather than its filename — see [[dsu-notes]]. The two records are
+deliberately separate: this file covers the user's whole day across every project, a DSU covers one
+project and is read by that project's team. Link across rather than restating the standup here, and
+never fold a day's standups into this file *instead of* writing them.
+
+If a standup happened and no DSU note exists yet, say so in Proposed Updates rather than absorbing
+its content — that's a missing project record, and burying it in a daily summary is how it stays
+missing.
 
 ### 5. Schedule
 
