@@ -83,7 +83,7 @@
       "name": "nerdynik-plaud-toolkit",
       "source": "./plugins/nerdynik-plaud-toolkit",
       "displayName": "Plaud Toolkit",
-      "description": "Retrieving and correctly interpreting recordings, transcripts, and AI notes from a Plaud account. Bundles the official Plaud MCP server and a skill covering the parts that bite: context-heavy responses, a paraphrasing \"polished\" transcript that must never be quoted, diarization that merges two speakers into one turn, UTC-vs-local timestamp mismatches, and the proper-noun glossary loop that keeps mistranscribed names out of downstream notes.",
+      "description": "Retrieving and correctly interpreting recordings, transcripts, and AI notes from a Plaud account. Bundles the official Plaud MCP server and a skill covering the parts that bite: context-heavy responses, a paraphrasing \"polished\" transcript that must never be quoted, diarization that merges two speakers into one turn, UTC-vs-local timestamp mismatches, the proper-noun glossary loop that keeps mistranscribed names out of downstream notes, and the silent upload gap where a signed-out desktop app or an unsynced recorder makes missing meetings look like meetings that never happened.",
       "category": "productivity",
       "keywords": [
         "plaud",

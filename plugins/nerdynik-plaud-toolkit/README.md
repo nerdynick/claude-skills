@@ -23,21 +23,30 @@ nerdynik-plaud-toolkit/
   .mcp.json                              # the Plaud MCP server
   skills/
     nerdynik-plaud-recordings/
-      SKILL.md                           # guardrails, retrieval strategy, glossary loop
+      SKILL.md                           # guardrails, retrieval strategy, missing-upload checks, glossary loop
       references/
         mcp-reference.md                 # tool schemas, response shapes, data model
 ```
 
 ## Why the skill exists
 
-The API is straightforward. Interpreting its output correctly is not. Four properties of the data will produce confidently wrong results if you don't plan around them, and each one fails in a way that looks like success:
+The API is straightforward. Interpreting its output correctly is not. Five properties of the data will produce confidently wrong results if you don't plan around them, and each one fails in a way that looks like success:
 
 - **`get_file` returns everything inline** — metadata, the full transcript, the outline, and the notes in one response. On an hour-long recording that's an enormous single-call context cost with no way to page it back.
 - **The "polished" transcript paraphrases.** It rewrites wording rather than just stripping filler, in ways that can change meaning. It's fine for skimming and unusable for quoting.
 - **Diarization merges speakers.** One attributed turn regularly contains both sides of an exchange, so attributing a quote from the segment label alone is unsafe.
 - **Proper nouns get mangled**, consistently and creatively — one short recording can render a single unfamiliar name four different ways. Uncorrected, those names get written into notes and cited later as fact.
+- **An empty result carries no information.** A recording that never uploaded looks identical to a meeting that never happened — same healthy account, same successful call, same empty list.
 
 The skill also handles the timestamp trap: `start_at` is UTC while the AI summary renders account-local time, and `created_at` is the upload time — roughly the *end* of the meeting, never its start.
+
+## Missing recordings
+
+Nothing in the account tells you that uploads have stopped. Plaud Desktop signs itself out and quietly stops capturing computer-side calls, and a Note or NotePin holds its audio until it syncs with the phone app — either way the API stays healthy and simply returns less.
+
+The skill checks for that whenever an expected recording isn't found, or a scheduled poll comes up empty for a day: it reads the newest `created_at` to find when anything last reached the account, and if the gap spans a working day or more it tells you, naming both candidate causes rather than guessing between them.
+
+**Weekends don't count.** A gap measured in calendar days flags every Monday morning, so the skill measures working days and checks your calendar first — a day with no meetings on it already explains itself.
 
 ## Setup
 

@@ -1,6 +1,16 @@
 ---
 name: nerdynik-plaud-recordings
-description: Use when retrieving, searching, quoting, summarizing, or otherwise working with recordings, transcripts, AI notes, or meeting summaries from a Plaud account or the plaud MCP server — finding a past call, answering what was said in a meeting, pulling an exact quote, extracting action items, identifying who spoke, or writing transcript-derived content into notes or a task tracker. Covers the specific failure modes of this data — oversized responses, a paraphrased transcript variant that must never be quoted, speaker diarization that merges two people into one turn, UTC-versus-local timestamps, and mistranscribed proper nouns.
+description: >-
+  Use when retrieving, searching, quoting, summarizing, or otherwise working with recordings,
+  transcripts, AI notes, or meeting summaries from a Plaud account or the plaud MCP server —
+  finding a past call, answering what was said in a meeting, pulling an exact quote, extracting
+  action items, identifying who spoke, or writing transcript-derived content into notes or a task
+  tracker. Also covers recordings that never arrive: a meeting the user refers to that isn't in the
+  account, or a scheduled poll finding no meetings for the day, which usually means Plaud Desktop
+  signed itself out or the recorder never synced to the phone — unless the gap is only the
+  weekend. Covers the specific failure modes of this data — oversized responses, a paraphrased
+  transcript variant that must never be quoted, speaker diarization that merges two people into
+  one turn, UTC-versus-local timestamps, and mistranscribed proper nouns.
 ---
 
 # Working with Plaud Recordings
@@ -9,11 +19,11 @@ description: Use when retrieving, searching, quoting, summarizing, or otherwise 
 
 The `plaud` MCP server exposes that account **read-only** — it retrieves recordings, transcripts, and notes, and cannot alter or delete the source audio.
 
-The data is genuinely useful, but four of its characteristics will silently produce wrong output if you don't plan around them. They're stated as guardrails below because each one has a failure mode that looks like success.
+The data is genuinely useful, but five of its characteristics will silently produce wrong output if you don't plan around them. They're stated as guardrails below because each one has a failure mode that looks like success.
 
 Full tool schemas, response shapes, and field-level detail are in `references/mcp-reference.md`. Read it before writing any code against the API or debugging an unexpected response.
 
-## The four guardrails
+## The five guardrails
 
 **1. Never call `get_file` as an exploratory first step.** It returns metadata, an audio URL, the *entire* transcript inline, the outline, and the AI notes in a single response. On an hour-long recording that consumes an enormous share of the context window at once, and it can't be paged back. Call it only when you specifically need the presigned audio URL, or when a recording is genuinely short and you want everything.
 
@@ -22,6 +32,8 @@ Full tool schemas, response shapes, and field-level detail are in `references/mc
 **3. Never attribute a quote from the segment label alone.** Diarization regularly folds both sides of an exchange into one attributed turn. See "Speaker identity".
 
 **4. Read the glossary before interpreting anything.** Automatic transcription mangles proper nouns — names, companies, products — and an uncorrected name written into a note gets cited later as fact. See "The glossary loop".
+
+**5. Never treat an empty result as a settled answer.** A recording that never uploaded is indistinguishable from a meeting that never happened. If something expected is missing *and* nothing has reached the account for a day or more, say so rather than reporting a clean "not found". See "When an expected recording is missing".
 
 ## Entry: pick the cheapest path that answers the question
 
@@ -39,6 +51,58 @@ Escalate through these in order. Most requests stop at the first or second row.
 `query` is a case-insensitive substring match on the **recording name only** — it does not search transcript content. Names are auto-generated and tend to be topic-ish (`08-07 Consultation: Northwind — Platform Migration`), which makes name search unexpectedly effective for finding a customer meeting, and useless for finding a topic that was discussed but not in the title.
 
 **Filtered results are capped.** Filtering happens after scanning a bounded window of the most recent recordings. If the response comes back `truncated: true`, older matches exist that were never examined. Say so — reporting "no results found" on a truncated scan is wrong, and the user may be able to narrow by date instead.
+
+## When an expected recording is missing
+
+An empty result is the one answer this API gives that carries no information. A recording that never uploaded looks exactly like a meeting that never happened: the account is healthy, the MCP server is authenticated, every call returns successfully, and the list comes back empty either way. **Silence here is not evidence.**
+
+Two things upstream of the account stop recordings from arriving, and neither is visible through this API:
+
+- **Plaud Desktop signed itself out.** It stops capturing and uploading computer-side calls — silently, and indefinitely, until someone opens it and signs back in. This is the common one, because nothing about the account looks wrong while it's happening.
+- **The device never synced.** Audio on a Note or NotePin stays on the device until it syncs with the phone app, and the phone app uploads it from there. A recorder that hasn't been near the phone, or a phone app that hasn't been opened, can hold days of recordings the account has never seen.
+
+Both are recoverable, and the second one loses nothing — the audio is still sitting on the device.
+
+### When to raise it
+
+Raise it when **both** conditions hold:
+
+1. **An expected recording isn't there.** The user referred to a specific call, or a scheduled poll ran for a day that should have had meetings, and the search came up empty. Check `truncated` first — a truncated scan is a different problem (see "Searching").
+2. **The gap is at least a day wide.** Nothing at all has reached the account for a full day or more — not just this one recording.
+
+Verify the second condition before saying anything. Call `list_files` unfiltered and read the newest entry's `created_at`: it tracks upload/finalize, so it's the field that answers *when did anything last reach the account*. Don't use `start_at` for this — a recording made last week and uploaded today has an old `start_at` and a current `created_at`, and the pipeline is fine.
+
+A single missing recording with others arriving on either side of it is **not** this failure. That's a recording that failed, was deleted, or was never started, and blaming a logout sends the user off to check something that isn't broken.
+
+### The weekend exception
+
+**A gap that covers only the user's non-working days is not a signal.** Nothing uploaded Saturday and Sunday almost certainly means nothing was recorded Saturday and Sunday. A known holiday or stretch of PTO reads the same way.
+
+So measure the gap in *working* days, not calendar days:
+
+| Checked | Last upload | Read it as |
+|---|---|---|
+| Monday morning | Friday afternoon | One working day. Unremarkable — say nothing. |
+| Monday morning | Wednesday | Two-plus working days missed. Raise it. |
+| Thursday | Tuesday | A full working day with nothing. Raise it. |
+
+If the user's calendar is reachable, check it before alerting — a day with no meetings on it explains an empty day by itself, and that's a cheaper explanation than a broken upload path.
+
+### In a scheduled or unattended run
+
+A daily poll that finds nothing has nobody to ask, so it has to decide for itself. Apply the same test — working-day gap width first, calendar second — and then **write the finding into the output instead of reporting a silently empty day.** "No meetings found" and "No meetings found, and nothing has uploaded since Tuesday afternoon — check whether Plaud Desktop is still signed in" read very differently to someone skimming that summary a week later.
+
+An empty weekend or holiday run needs no note at all. Don't manufacture an alert to have something to report.
+
+### What to say
+
+Report the observation and both candidate causes. Don't assert which one it is, and don't try to fix it — both remedies are outside this API and outside this machine.
+
+> I couldn't find a recording for that call, and nothing has uploaded to your Plaud account since Tuesday afternoon. Two likely causes: Plaud Desktop may have signed itself out, or your recorder hasn't synced with the phone app yet. Both are worth a look — if it's the sync, the recordings are still on the device and will upload once it connects.
+
+Give the **actual date and time of the last upload** rather than "a while ago". It's the fact that tells the user which cause is likelier and how much is affected.
+
+**Say it once per session.** Don't re-raise it on every subsequent lookup, and if the user says they already know, drop it.
 
 ## Choosing a block
 
@@ -220,6 +284,8 @@ Persisting is a convenience, not a requirement. A glossary in a predictable plac
 ## Authentication
 
 `login` opens a browser for OAuth. **Only invoke it reactively**, when another call fails on authentication — never proactively at the start of a session. Never call `logout` unless the user explicitly asks to disconnect the account.
+
+This login covers **this server's read access to the account, and nothing else.** It is unrelated to whether Plaud Desktop is signed in or whether the recorder has synced — a perfectly authenticated session will return an empty list while recordings pile up unuploaded, and calling `login` again does not fix that. See "When an expected recording is missing".
 
 ## What isn't confirmed
 
