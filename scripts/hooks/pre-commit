@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+#
+# Pre-commit gate: the checks whose failures are otherwise silent.
+#
+# Everything here is also run in CI, so this hook is a fast local mirror rather
+# than the only line of defence. It exists because the failures it catches --
+# an over-long description, frontmatter that does not parse, a skill that is
+# not catalogued -- produce no error at runtime. The skill simply never fires,
+# and nobody finds out for weeks.
+#
+# Installed by `make install-hooks`, which points core.hooksPath at this
+# directory so the hook stays in sync with the repository automatically.
+#
+# Escape hatches, in order of preference:
+#   git commit --no-verify      skip every hook for one commit
+#   SKIP_SKILL_CHECKS=1 git ... skip just this hook
+#
+# Note: these checks read the WORKING TREE, not the staged index. Committing a
+# subset of your changes still validates the whole repository, which is the
+# behaviour you want for a content repo -- a half-staged skill is exactly the
+# kind of thing worth catching.
+
+set -uo pipefail
+
+if [ "${SKIP_SKILL_CHECKS:-}" = "1" ]; then
+    echo "pre-commit: skipped (SKIP_SKILL_CHECKS=1)"
+    exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root" || exit 1
+
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "pre-commit: python3 not found, and every check needs it." >&2
+    echo "            Install python3, or bypass once with 'git commit --no-verify'." >&2
+    exit 1
+fi
+
+failed=0
+run() {
+    local label="$1"
+    shift
+    local output
+    if ! output="$("$@" 2>&1)"; then
+        printf '\n\033[1;31m✘ %s\033[0m\n' "$label"
+        printf '%s\n' "$output"
+        failed=1
+    else
+        printf '\033[0;32m✔\033[0m %s\n' "$label"
+        # Warnings still matter; show them without failing the commit.
+        printf '%s\n' "$output" | grep -E '^warning:' || true
+    fi
+}
+
+echo "pre-commit: validating skills and marketplace…"
+
+run "skill frontmatter"   python3 scripts/check-skill-frontmatter.py
+run "marketplace coverage" python3 scripts/check-marketplace-coverage.py
+run "agent docs"          python3 scripts/check-agent-docs.py
+
+# `claude plugin validate` is the authority on manifest shape, but the CLI is
+# not always installed locally. CI always runs it, so a missing CLI downgrades
+# to a notice rather than blocking the commit.
+#
+# This delegates to the Makefile target rather than calling `claude` directly,
+# so the hook inherits its template-tolerance: an unfilled marketplace with no
+# packages yet is skipped instead of failing --strict on "no plugins defined".
+if command -v claude >/dev/null 2>&1; then
+    run "manifest validation" make --no-print-directory validate-manifests
+else
+    printf '\033[0;33m–\033[0m %s\n' "manifest validation skipped (claude CLI not on PATH; CI will run it)"
+fi
+
+if [ "$failed" -ne 0 ]; then
+    cat >&2 <<'MSG'
+
+Commit blocked. Every failure above is one that produces NO error at runtime —
+the skill just silently never fires — which is why it is caught here instead.
+
+Fix the reported files and commit again, or bypass with:
+    git commit --no-verify
+MSG
+    exit 1
+fi
+
+echo "pre-commit: all checks passed."
+exit 0

@@ -1,6 +1,11 @@
 ---
 name: nerdynik-obsidian-project-manager-notes
-description: Use when reading, summarizing, querying, or reporting on project plans stored by the Obsidian "Project Manager" community plugin (obsidian-pm) — milestones, tasks, subtasks, dependencies, status, priority, and other planning data written to the vault. Use for status reports, "what's overdue/blocked," milestone tracking, or turning plan data into a client-facing update.
+description: >-
+  Use when reading, summarizing, querying, or reporting on project plans stored by the
+  Obsidian "Project Manager" community plugin (obsidian-pm) — milestones, tasks, subtasks,
+  dependencies, status, priority, and other planning data written to the vault. Use for
+  status reports, "what's overdue/blocked," milestone tracking, or turning plan data into a
+  client-facing update.
 ---
 
 # Reading Project Manager Plugin Data

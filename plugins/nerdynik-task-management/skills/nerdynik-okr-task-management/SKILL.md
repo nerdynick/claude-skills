@@ -1,6 +1,14 @@
 ---
 name: nerdynik-okr-task-management
-description: Use when setting, structuring, tracking, scoring, or reviewing OKRs and goals in a task tracker (Vikunja by default) — writing long-term/yearly/annual objectives, defining mid-term/quarterly key results, breaking a quarter into short-term/monthly SMART goals, running a weekly check-in or quarterly review, scoring key results at close, or auditing an existing goal set for quality. Handles multiple independent OKR sets scoped separately — personal, per-department, per-practice, or company-wide — for someone tracking several at once, such as a manager or practice leader over multiple departments. Not for general project or customer task tracking — use nerdynik-task-list-organization for that.
+description: >-
+  Use when setting, structuring, tracking, scoring, or reviewing OKRs and goals in a task
+  tracker (Vikunja by default) — writing long-term/yearly/annual objectives, defining
+  mid-term/quarterly key results, breaking a quarter into short-term/monthly SMART goals,
+  running a weekly check-in or quarterly review, scoring key results at close, or auditing
+  an existing goal set for quality. Handles multiple independent OKR sets scoped separately
+  — personal, per-department, per-practice, or company-wide — for someone tracking several
+  at once, such as a manager or practice leader over multiple departments. Not for general
+  project or customer task tracking — use nerdynik-task-list-organization for that.
 ---
 
 # OKR and Goal Management

@@ -1,6 +1,13 @@
 ---
 name: nerdynik-task-list-organization
-description: Use when creating, structuring, auditing, or reporting on task lists and projects in a task tracker (Vikunja by default) — setting up tracking for a new customer engagement, deciding which project a task belongs in, naming or reorganizing projects, designing or cleaning up a label taxonomy for practices and partners, building role-level views for a manager or practice leader who needs to see across departments and engagements, or running a weekly review. Covers customer/project work and internal company-wide tracking alike. Not for OKRs or goal setting — use nerdynik-okr-task-management for those.
+description: >-
+  Use when creating, structuring, auditing, or reporting on task lists and projects in a
+  task tracker (Vikunja by default) — setting up tracking for a new customer engagement,
+  deciding which project a task belongs in, naming or reorganizing projects, designing or
+  cleaning up a label taxonomy for practices and partners, building role-level views for a
+  manager or practice leader who needs to see across departments and engagements, or running
+  a weekly review. Covers customer/project work and internal company-wide tracking alike.
+  Not for OKRs or goal setting — use nerdynik-okr-task-management for those.
 ---
 
 # Task List Organization

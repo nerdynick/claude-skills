@@ -21,6 +21,11 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # Shared across the GitHub, Forgejo and GitLab collections -- see
+  # .github/workflows/README.md for the full variable reference.
+  DIST_DIR: dist
+
 jobs:
   validate:
     uses: ./.github/workflows/validate.yml
@@ -78,7 +83,10 @@ jobs:
       - name: Check whether this version is already released
         id: existing
         env:
-          GH_TOKEN: ${{ github.token }}
+          # RELEASE_TOKEN is the name shared with the Forgejo and GitLab
+          # collections. Unset is the normal case here: the built-in job token
+          # can already create releases in its own repository.
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
         run: |
           tag="v${{ steps.stage.outputs.version }}"
           if gh release view "$tag" >/dev/null 2>&1; then
@@ -92,7 +100,7 @@ jobs:
       - name: Publish release
         if: steps.existing.outputs.published == 'false'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
         run: |
           tag="v${{ steps.stage.outputs.version }}"
           gh release create "$tag" \

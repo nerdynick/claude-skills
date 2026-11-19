@@ -1,2 +1,6 @@
 dist/
 .DS_Store
+
+# Python bytecode from `make test`.
+__pycache__/
+*.pyc

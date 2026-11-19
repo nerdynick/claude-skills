@@ -1,6 +1,10 @@
 # The validation suite, factored out so pull-request.yml and release.yml run the
 # identical checks rather than each keeping its own copy. Every step delegates to
 # a Makefile target, so `make validate` locally is what CI runs.
+#
+# These are also the checks the pre-commit hook runs (scripts/hooks/pre-commit).
+# The hook is the fast local mirror and is bypassable with --no-verify; this
+# workflow is the backstop that is not.
 name: Validate
 
 on:
@@ -10,27 +14,54 @@ on:
 permissions:
   contents: read
 
+env:
+  # Shared across the GitHub, Forgejo and GitLab collections -- see
+  # .github/workflows/README.md for the full variable reference.
+  NODE_VERSION: "22"
+  PYTHON_VERSION: "3.12"
+  CLAUDE_CLI_PACKAGE: "@anthropic-ai/claude-code"
+
 jobs:
   validate:
-    name: Manifests and coverage
+    name: Manifests, skills and coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # The checks fall back to a built-in frontmatter parser when PyYAML is
+      # absent, but agreeing with a real parser is the point -- so CI installs
+      # it and is the authority on what parses.
+      - name: Install PyYAML
+        run: python3 -m pip install --quiet pyyaml
 
       # `make validate-manifests` shells out to `claude plugin validate`, which
       # is entirely local — no API key or login needed.
       - name: Install Claude Code CLI
-        run: npm install --global @anthropic-ai/claude-code
+        run: npm install --global "$CLAUDE_CLI_PACKAGE"
 
       - name: List discovered packages
         run: make list
+
+      # Unit tests first: a broken checker makes every check below meaningless.
+      - name: Run validation script unit tests
+        run: make test
 
       - name: Validate marketplace and plugin manifests
         run: make validate-manifests
 
       - name: Check marketplace coverage
         run: make validate-coverage
+
+      - name: Validate skill frontmatter
+        run: make validate-skills
+
+      - name: Check AGENTS.md mirrors CLAUDE.md
+        run: make validate-agent-docs
